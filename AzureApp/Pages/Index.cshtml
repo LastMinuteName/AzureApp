@@ -1,0 +1,49 @@
+﻿@page
+@using System.Net;
+@using System.Text.Json;
+@using AppCode;
+@model IndexModel
+@{
+    ViewData["Title"] = "Home page";
+
+    HttpClient client = new HttpClient();
+    using HttpResponseMessage response = await client.GetAsync("https://esi.evetech.net/latest/markets/10000002/history/?datasource=tranquility&type_id=44992");
+    string responseBody = await response.Content.ReadAsStringAsync();
+    var items = JsonSerializer.Deserialize <IList<AppCode.Order>>(responseBody);
+
+
+}
+
+<div class="text-center">
+    <h1 class="display-4">EVE Online: Plex Prices</h1>
+
+    <div class="row justify-content-center">
+        <div class="col-auto">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">Average</th>
+                        <th scope="col">Date</th>
+                        <th scope="col">Highest</th>
+                        <th scope="col">Lowest</th>
+                        <th scope="col">Order Count</th>
+                        <th scope="col">Volume</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in items.Reverse())
+                    {
+                        <tr>
+                            <td>@item.volume</td>
+                            <td>@item.date</td>
+                            <td>@item.highest</td>
+                            <td>@item.lowest</td>
+                            <td>@item.order_count</td>
+                            <td>@item.volume</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
